@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="GraphPaneFX.jnlp">
+  <information>
+    <title>GraphPaneFX</title>
+    <vendor>Karol</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="GraphPaneFX.jar" size="50179" download="eager" />
+    <jar href="lib\antlr4-runtime-4.5.3.jar" size="302248" download="eager" />
+    <jar href="lib\jgraph-5.13.0.0.jar" size="296115" download="eager" />
+    <jar href="lib\jgrapht-core-1.0.0.jar" size="438084" download="eager" />
+    <jar href="lib\jgrapht-demo-1.0.0.jar" size="19433" download="eager" />
+    <jar href="lib\jgrapht-ext-1.0.0-uber.jar" size="2000948" download="eager" />
+    <jar href="lib\jgrapht-ext-1.0.0.jar" size="126484" download="eager" />
+    <jar href="lib\jgraphx-2.0.0.1.jar" size="819906" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="GraphPaneFX" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="application.Main"  name="GraphPaneFX" />
+  <update check="always"/>
+</jnlp>

@@ -13,6 +13,7 @@ import javafx.geometry.Point2D;
 
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -31,6 +32,12 @@ public class Cell extends StackPane  {
     Node[] views;
     
     boolean selected = false;
+    
+    public static final double MIN_WIDTH = 50.0d;
+    public static final double MAX_WIDTH = 50.0d;
+    
+    public static final double MIN_HEIGHT = 50.0d;
+    public static final double MAX_HEIGHT = 50.0d;
     
     
 
@@ -89,6 +96,12 @@ public class Cell extends StackPane  {
     public boolean isSelected() {
         return selected;
     }
+    
+    // When convenient time implement here.
+    public void setCellWidth(double width) {};
+    public void setCellHeight(double height) {};
+    public void setCellColor(String color) {};
+    public void setCellText(String id) {};
     
     
     public static void Marshalling(Cell cell) throws JAXBException {

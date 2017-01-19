@@ -7,12 +7,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fxgraph.editpanes.EditPaneController">
+<BorderPane fx:id="base_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fxgraph.editpanes.EditPaneController">
    <bottom>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="201.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="10.0" prefWidth="70.0" text="Ok" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="10.0" />
-            <Button layoutX="308.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="10.0" prefWidth="70.0" text="Cancel" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <Button fx:id="ok_button" layoutX="201.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onOKAction" prefHeight="10.0" prefWidth="70.0" text="Ok" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <Button fx:id="cancel_button" layoutX="308.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCancelAction" prefHeight="10.0" prefWidth="70.0" text="Cancel" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="10.0" />
          </children>
       </AnchorPane>
    </bottom>
@@ -42,17 +42,17 @@
                               <Insets left="40.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="height_txt_field" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets left="40.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="width_txt_field" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <GridPane.margin>
-                              <Insets left="40.0" />
-                           </GridPane.margin>
-                        </TextField>
                         <ColorPicker fx:id="color_picker" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                        <Slider fx:id="height_slider" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="40.0" />
+                           </GridPane.margin>
+                        </Slider>
+                        <Slider fx:id="width_slider" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <padding>
+                              <Insets left="40.0" />
+                           </padding>
+                        </Slider>
                      </children>
                   </GridPane>
                </children>

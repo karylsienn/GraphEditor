@@ -7,15 +7,19 @@ package application;
 
 import com.fxgraph.cells.DragIcon;
 import com.fxgraph.editpanes.EditPaneController;
+import com.fxgraph.graph.Cell;
 import com.fxgraph.graph.CellType;
 import com.fxgraph.graph.DragContainer;
 import com.fxgraph.graph.Graph;
 import com.fxgraph.graph.Model;
 import com.fxgraph.layout.base.Layout;
 import com.fxgraph.layout.random.RandomLayout;
+import com.fxgraph.layout.random.StaticLayout;
 import com.jgraph.DijkstraTest;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -137,6 +141,8 @@ public class MainSceneController extends BorderPane implements Initializable {
         Stage secondStage = new Stage();
         secondStage.setScene(new Scene(editPane));
         secondStage.show();
+        
+        
     }
 
     
@@ -147,7 +153,6 @@ public class MainSceneController extends BorderPane implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         
         try {
-            DijkstraTest.main();
             
             // Fill the left_pane with dragIcons.
             addRightPaneIcons(); 
@@ -178,10 +183,10 @@ public class MainSceneController extends BorderPane implements Initializable {
             addGraphComponents();
             
             // Create a layout of this graph.
-            //layout = new RandomLayout(graph);
-            //layout.execute();
-            
             layout = new RandomLayout(graph);
+            layout.execute();
+            
+            //layout = new StaticLayout(graph);
             /*((StaticLayout) layout).setInitialPositions(
                     new ArrayList<>(
                             Arrays.asList(
@@ -191,7 +196,7 @@ public class MainSceneController extends BorderPane implements Initializable {
                             new Point2D(133.4, 74.43),
                             new Point2D(4.5, 210.4)
                     ))); */
-            layout.execute();
+            //layout.execute();
 
         } catch (Exception ex) {
             Logger.getLogger(MainSceneController.class.getName()).log(Level.SEVERE, null, ex);
@@ -237,6 +242,7 @@ public class MainSceneController extends BorderPane implements Initializable {
      */
     private void addGraphComponents() throws Exception {
 
+        System.out.println("Jestem tutaj.");
         graph.beginUpdate();
 
         model.addCell("Cell A", CellType.TRIANGLE);
@@ -386,7 +392,6 @@ public class MainSceneController extends BorderPane implements Initializable {
                     
                     try {
                         MainSceneController.this.setOnCellInsertedEditPane(ct);
-                        
                         
                     } catch (IOException ex) {
                         Logger.getLogger(MainSceneController.class.getName()).log(Level.SEVERE, null, ex);

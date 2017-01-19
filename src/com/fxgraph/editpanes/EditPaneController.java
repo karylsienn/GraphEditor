@@ -17,8 +17,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * FXML Controller class
@@ -27,10 +33,16 @@ import javafx.scene.layout.AnchorPane;
  */
 public class EditPaneController implements Initializable {
 
+    @FXML private BorderPane base_pane;
     @FXML private AnchorPane right_pane;
     @FXML private TextField name_txt_field;
-    @FXML private TextField height_txt_field;
-    @FXML private TextField width_txt_field;
+    @FXML private Slider height_slider;
+    @FXML private Slider width_slider;
+    @FXML private ColorPicker color_picker;
+    @FXML private Button ok_button;
+    @FXML private Button cancel_button;
+    
+    private static int countInit;
     
     private CellType cellType;
     private Cell cell;
@@ -43,13 +55,21 @@ public class EditPaneController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //msc = new MainSceneController();
+        
+        countInit += 1;
+  
+        
         System.out.println("Initialize");
-        //msc.setEditPaneController(this);
         
-        //cell.setVisible(true);
+        height_slider.setMin(Cell.MIN_HEIGHT);
+        height_slider.setMax(Cell.MAX_HEIGHT);
+        height_slider.setBlockIncrement(0.1);
         
-        //right_pane.getChildren().add(cell);
+        width_slider.setMin(Cell.MIN_WIDTH);
+        width_slider.setMax(Cell.MAX_WIDTH);
+        width_slider.setBlockIncrement(0.1);
+        
+        
        
     }
     
@@ -86,7 +106,36 @@ public class EditPaneController implements Initializable {
                 localBounds.getHeight() + cell.getHeight()
         );
         
+       // height_slider.valueProperty().addListener(
+         //       (observable, oldValue, newValue) -> cell.setHeight(newValue.doubleValue()));
+        //width_slider.valueProperty().addListener(
+        //        (observable, oldValue, newValue) -> cell.setWidth(newValue.doubleValue()));
+        
+       // color_picker.valueProperty().addListener((observable, oldValue, newValue) 
+       //         -> cell.setColor(newValue.toString()));
+        
     }
+    
+    public void onOKAction() {
+        cell.setCellText(name_txt_field.getText().isEmpty() ? 
+                "Node" + String.valueOf(countInit) : 
+                name_txt_field.getText());
+        
+        Stage stage = (Stage) base_pane.getScene().getWindow();
+        stage.close();
+    }
+    
+    public void onCancelAction() {
+        cell.setCellText("Node" + String.valueOf(countInit));
+        Stage stage = (Stage) base_pane.getScene().getWindow();
+        stage.close();
+    }
+    
+    public Cell getCell() {
+        return cell;
+    }
+
+    
     
     
 }

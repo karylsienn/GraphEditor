@@ -104,5 +104,9 @@ public class Graph {
         return this.scrollPane.getScaleValue();
     }
     
+    public MouseGestures getMouseGestures() {
+        return this.mouseGestures;
+    }
+    
 
 }

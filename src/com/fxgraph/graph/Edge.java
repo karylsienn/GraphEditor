@@ -12,6 +12,7 @@ package com.fxgraph.graph;
 
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -50,6 +51,14 @@ public class Edge extends Group {
         
         getChildren().addAll( line, weightLabel);
 
+    }
+    
+    public Line getLine() {
+        return this.line;
+    }
+    
+    public void setLineColor(Color color) {
+        this.line.setFill(color);
     }
 
     public Cell getSource() {

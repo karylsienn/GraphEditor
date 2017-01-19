@@ -5,16 +5,20 @@
  */
 package application;
 
+import com.fxgraph.cells.CircleCell;
 import com.fxgraph.cells.DragIcon;
 import com.fxgraph.editpanes.EditPaneController;
 import com.fxgraph.graph.Cell;
 import com.fxgraph.graph.CellType;
 import com.fxgraph.graph.DragContainer;
+import com.fxgraph.graph.Edge;
 import com.fxgraph.graph.Graph;
 import com.fxgraph.graph.Model;
 import com.fxgraph.layout.base.Layout;
 import com.fxgraph.layout.random.RandomLayout;
 import com.fxgraph.layout.random.StaticLayout;
+import com.jgraph.BellmanFord;
+import com.jgraph.Dijkstra;
 import com.jgraph.DijkstraTest;
 import java.io.IOException;
 import java.net.URL;
@@ -23,6 +27,8 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -44,6 +50,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 /**
  * FXML Controller class
@@ -72,6 +79,11 @@ public class MainSceneController extends BorderPane implements Initializable {
      * The split Pane containing the the right_pane and left_pane.
      */
     @FXML SplitPane base_pane;
+    
+    /**
+     * The pane for cell editing.
+     */
+    @FXML AnchorPane edit_pane;
     
     /**
      * Graph to be showed.
@@ -115,35 +127,11 @@ public class MainSceneController extends BorderPane implements Initializable {
      * The gridpane that holds the shapes for vertices.
      */
     @FXML private GridPane vertices_gridpane; 
+  
+    private static final String NEW_NODE_NAME = "Node";
     
-    /**
-     * The EditPaneController that will control the edit pane after inserting cells.
-     */
-    private EditPaneController epc;
-    
-    /**
-     * To be called from the EditPaneController class.
-     * @param epc 
-     */
-    public void setEditPaneController(EditPaneController epc) { this.epc = epc; }
-    
-    public void setOnCellInsertedEditPane(CellType ct) throws IOException {
-        
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/com/fxgraph/editpanes/EditPane.fxml"));
-        Parent editPane = fxmlLoader.load();
-        
-        epc = (EditPaneController) fxmlLoader.getController(); 
-        epc.setCellType(ct);
-        epc.createCell();
-        epc.showShape();
-        
-        Stage secondStage = new Stage();
-        secondStage.setScene(new Scene(editPane));
-        secondStage.show();
-        
-        
-    }
+    private static int NEW_NODE_COUNTER;
+   
 
     
     /**
@@ -160,6 +148,8 @@ public class MainSceneController extends BorderPane implements Initializable {
             // Build drag handlers for handling the 
             // drags and drops between left and right pane.
             buildDragHandlers();
+            
+            //setOnCellInsertedEditPane();
             
             // Create a dragOverIcon - silent for now
             dragOverIcon = new DragIcon();
@@ -179,14 +169,16 @@ public class MainSceneController extends BorderPane implements Initializable {
             // Get the graph model, to be able to manipulate the cells and edges.
             model = graph.getModel();
             
+            
+            
             // add the components
-            addGraphComponents();
+            //addGraphComponents();
             
             // Create a layout of this graph.
-            layout = new RandomLayout(graph);
-            layout.execute();
+            //layout = new RandomLayout(graph);
+            //layout.execute();
             
-            //layout = new StaticLayout(graph);
+            layout = new StaticLayout(graph);
             /*((StaticLayout) layout).setInitialPositions(
                     new ArrayList<>(
                             Arrays.asList(
@@ -196,7 +188,7 @@ public class MainSceneController extends BorderPane implements Initializable {
                             new Point2D(133.4, 74.43),
                             new Point2D(4.5, 210.4)
                     ))); */
-            //layout.execute();
+            layout.execute();
 
         } catch (Exception ex) {
             Logger.getLogger(MainSceneController.class.getName()).log(Level.SEVERE, null, ex);
@@ -377,25 +369,21 @@ public class MainSceneController extends BorderPane implements Initializable {
             if (container != null) {
                 if (container.getValue("scene_coords") != null) {
                     
-                    graph.beginUpdate();
+                    NEW_NODE_COUNTER += 1;
+                    
                     Point2D cursorPoint = (Point2D) container.getValue("scene_coords");
                     
                     System.out.println(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
                     
                     CellType ct = CellType.valueOf((String) container.getValue("type"));
                     
-                    model.addCell("New node", ct);
-                    
+
+                    graph.beginUpdate();
+                    model.addCell(NEW_NODE_NAME + NEW_NODE_COUNTER, ct);
                     graph.endUpdate();
-                    
                     layout.insertCellAtPoint(cursorPoint);
-                    
-                    try {
-                        MainSceneController.this.setOnCellInsertedEditPane(ct);
-                        
-                    } catch (IOException ex) {
-                        Logger.getLogger(MainSceneController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    layout.execute();
+                     
                    
                 }
             }
@@ -406,5 +394,71 @@ public class MainSceneController extends BorderPane implements Initializable {
             
         });
 
+    }
+    
+    @FXML public void handleDijkstra() {
+        Cell algoSource = (Cell) graph.getMouseGestures().getAlgoSource();
+        Cell algoTarget = (Cell) graph.getMouseGestures().getAlgoTarget();
+        
+        if(algoSource!=null & algoTarget!=null & algoSource != algoTarget) {
+            ArrayList<String[]> path = Dijkstra.getShortestPath(graph, algoSource, algoTarget);
+            for(String[] p : path) {
+                Edge edge = graph.getModel().getEdge(p[0], p[1]);
+                System.out.println(edge.getSource() + " " + edge.getTarget());
+                graph.beginUpdate();
+                edge.getLine().setFill(Color.BLUE);
+                edge.getLine().setStroke(Color.AQUA);
+                graph.endUpdate();
+                layout.execute();
+            }
+        }
+    }
+    
+    @FXML public void AlgorithmClearAction() {
+        for(Edge edge : graph.getModel().getAllEdges()) {
+            edge.getLine().setStroke(Color.BLACK);
+        }
+    }
+    
+    @FXML public void handleBellmanFord() {
+        Cell algoSource = (Cell) graph.getMouseGestures().getAlgoSource();
+        Cell algoTarget = (Cell) graph.getMouseGestures().getAlgoTarget();
+        
+        if(algoSource!=null & algoTarget!=null & algoSource != algoTarget) {
+            ArrayList<String[]> path = BellmanFord.getShortestPath(graph, algoSource, algoTarget);
+            for(String[] p : path) {
+                Edge edge = graph.getModel().getEdge(p[0], p[1]);
+                System.out.println(edge.getSource() + " " + edge.getTarget());
+                graph.beginUpdate();
+                edge.getLine().setFill(Color.BLUE);
+                edge.getLine().setStroke(Color.RED);
+                graph.endUpdate();
+                layout.execute();
+            }
+            
+            System.out.println("The cost is:" + BellmanFord.getCostToVertex(graph, algoSource, algoTarget));
+        }
+    }
+    
+    @FXML public void onDelete() {
+        NEW_NODE_COUNTER = 0;
+        graph.beginUpdate();
+        graph.getModel().clear();
+        right_pane.getChildren().remove(graph.getScrollPane());
+        graph.endUpdate();
+        
+        graph = new Graph();
+        ScrollPane graphPane;
+        right_pane.getChildren().add(graphPane = graph.getScrollPane());
+        right_pane.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        setAnchorSides(graphPane);
+        model = graph.getModel();
+        
+        layout = new StaticLayout(graph);
+        layout.execute();
+    }
+    
+    @FXML public void onClose() {
+        ((Stage)this.base_pane.getScene().getWindow()).close();
     }
 }

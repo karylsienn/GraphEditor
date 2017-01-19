@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
  */
 public class CircleCell extends Cell  {
     
-    private String id;
+    private String cellId;
     private Text textId;
     private Color color;
     private double height;
@@ -29,13 +29,13 @@ public class CircleCell extends Cell  {
     public CircleCell( String id) {
         super( id);
 
-        this.id = id;
+        this.cellId = id;
         
         Circle view = new Circle();
         textId = new Text(id);
         
         view.setStroke(Color.BLACK);
-        view.setFill(Color.GREEN);
+        view.setFill(Color.WHITE);
         
         view.setRadius(40);
         //view.setRadius(text.getLayoutBounds().getWidth());
@@ -67,11 +67,29 @@ public class CircleCell extends Cell  {
         });
     }
     
-    public void setCellText(String id) {
-        this.id = id;
+    public void setCellId(String id) {
+        this.cellId = id;
         getChildren().remove(textId);
         setView(textId = new Text(id));
     }
+    
+    
+    public double getCellHeight() {
+        return this.height;
+    }
+    
+    public double getCellWidth() {
+        return this.width;
+    }
+    
+    public Color getCellColor() {
+        return this.color;
+    }
+    
+    public String getCellId() {
+        return this.cellId;
+    }
+
     
     
 

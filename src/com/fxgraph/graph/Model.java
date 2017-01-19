@@ -15,7 +15,7 @@ import java.util.Map;
 import com.fxgraph.cells.TriangleCell;
 import com.fxgraph.cells.RectangleCell;
 import com.fxgraph.cells.CircleCell;
-import javafx.geometry.Point2D;
+import static java.util.stream.Collectors.toList;
 
 public class Model {
 
@@ -89,6 +89,8 @@ public class Model {
     public Cell getLastCell() {
         return allCells.get(allCells.size() - 1);
     }
+    
+    
 
     public void addCell(String id, CellType type) {
 
@@ -116,11 +118,17 @@ public class Model {
         }
     }
     
-   
+   public Edge getEdge(String sourceId, String targetId) {
+       return allEdges.stream().filter((Edge edge) -> (
+           edge.getSource().getCellId().equals(sourceId) &
+           edge.getTarget().getCellId().equals(targetId)
+       ) ).findAny().get();
+       
+   }
 
     
 
-    private void addCell( Cell cell) {
+    public void addCell( Cell cell) {
 
         addedCells.add(cell);
 
@@ -133,11 +141,33 @@ public class Model {
         Cell sourceCell = cellMap.get( sourceId);
         Cell targetCell = cellMap.get( targetId);
 
-        Edge edge = new Edge( sourceCell, targetCell, weight);
+        if(sourceCell != targetCell & 
+                allEdges.stream()
+                        .filter((Edge edge) ->
+                                (edge.getSource() == sourceCell)
+                                        && (edge.getTarget() == targetCell))
+                        .collect(toList()).isEmpty() ) 
+        {
+            
+                Edge edge = new Edge( sourceCell, targetCell, weight);
 
-        addedEdges.add( edge);
+            addedEdges.add( edge);
+        }
+        
+        
 
     }
+    
+    public void removeCell(Cell cell) {
+        removedCells.add(cell);
+        allEdges.forEach(edge -> {
+            if(edge.getSource() == cell || edge.getTarget() == cell) {
+                removedEdges.add(edge);
+            }
+        });
+    }
+    
+    
 
 
     /**
@@ -177,6 +207,12 @@ public class Model {
         addedEdges.clear();
         removedEdges.clear();
 
+    }
+    
+    public void renameCell(String sourceName, String targetName) {
+        Cell cell = cellMap.get(sourceName);
+        cellMap.keySet().remove(sourceName);
+        cellMap.put(targetName, cell);
     }
 
     

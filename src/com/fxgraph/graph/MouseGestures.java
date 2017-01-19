@@ -5,20 +5,24 @@
  */
 package com.fxgraph.graph;
 
+import com.fxgraph.editpanes.EdgeEditPaneController;
 import com.fxgraph.editpanes.EditPaneController;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 
 public class MouseGestures {
 
@@ -31,8 +35,10 @@ public class MouseGestures {
     String edgeSourceId;
     String edgeTargetId;
     
-    Node algoSource;
-    Node algoTarget;
+    private Node algoSource;
+    public Node getAlgoSource() {return algoSource; }
+    private Node algoTarget;
+    public Node getAlgoTarget() {return algoTarget; }
     
     Line dragLine;
     
@@ -76,16 +82,33 @@ public class MouseGestures {
     EventHandler<MouseDragEvent> onDragReleasedEventHandler = new EventHandler<MouseDragEvent>() {
         @Override
         public void handle(MouseDragEvent event) {
-            System.out.println("Dreag released");
-            Node node = (Node) event.getSource();
-            System.out.println(String.valueOf( ((Cell)node).getCellId()));
-            edgeTargetId = String.valueOf( ((Cell)node).getCellId());
-            
-            graph.beginUpdate();
-            graph.getModel().addEdge(edgeSourceId, edgeTargetId, 0);
-            graph.endUpdate();
-            
-            graph.getScrollPane();
+            try {
+                System.out.println("Dreag released");
+                Node node = (Node) event.getSource();
+                System.out.println(String.valueOf( ((Cell)node).getCellId()));
+                edgeTargetId = String.valueOf( ((Cell)node).getCellId());
+                
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("/com/fxgraph/editpanes/EdgeEditPane.fxml"));
+                Parent editPane = fxmlLoader.load();
+                EdgeEditPaneController epc = fxmlLoader.getController();
+                
+                Stage secondStage = new Stage();        
+                Scene scene = new Scene(editPane);
+
+                secondStage.setScene(scene);
+                secondStage.setAlwaysOnTop(true);
+                secondStage.showAndWait();
+                
+                
+                graph.beginUpdate();
+                graph.getModel().addEdge(edgeSourceId, edgeTargetId, epc.getWeight());
+                graph.endUpdate();
+                
+                graph.getScrollPane();
+            } catch (IOException ex) {
+                Logger.getLogger(MouseGestures.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     
     };
@@ -184,8 +207,9 @@ public class MouseGestures {
         MenuItem asSource = new MenuItem("Mark as Source");
         MenuItem asTarget = new MenuItem("Mark as Target");
         MenuItem edit = new MenuItem("Edit");
+        MenuItem delete = new MenuItem("Delete");
         
-        contextCellMenu.getItems().addAll(asSource, asTarget, edit);
+        contextCellMenu.getItems().addAll(asSource, asTarget, edit, delete);
         
         
     }
@@ -205,8 +229,43 @@ public class MouseGestures {
         contextCellMenu.getItems().get(2).setOnAction(
                 (ActionEvent event) -> {
                     
+                    
+                    try {
+                        FXMLLoader fxmlLoader = new FXMLLoader();
+                        fxmlLoader.setLocation(getClass().getResource("/com/fxgraph/editpanes/EditPane.fxml"));
+                        Parent editPane = fxmlLoader.load();
+                        EditPaneController epc = fxmlLoader.getController();
+                        System.out.println(editPane);
+                        System.out.println(source);
+                        epc.setGraph(graph);
+                        epc.setCell((Cell) source);
+                        
+                        Stage secondStage = new Stage();
+                        
+                        Scene scene = new Scene(editPane);
+
+                        secondStage.setScene(scene);
+                        secondStage.setAlwaysOnTop(true);
+                        secondStage.showAndWait();
+                        
+                        
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger(MouseGestures.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
                 }
         );
+        
+        contextCellMenu.getItems().get(3).setOnAction(
+                (ActionEvent event) -> {
+                    graph.beginUpdate();
+                    graph.getModel().removeCell((Cell)source);
+                    graph.endUpdate();
+                }
+                        
+        );
+        
     } 
 
 

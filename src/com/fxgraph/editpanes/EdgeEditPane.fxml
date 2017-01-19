@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="50.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="com.fxgraph.editpanes.EdgeEditPaneController">
+   <children>
+      <Label layoutX="28.0" layoutY="17.0" text="Weight" />
+      <TextField fx:id="weight_text_field" layoutX="86.0" layoutY="13.0" prefHeight="25.0" prefWidth="94.0" />
+   </children>
+</AnchorPane>

@@ -11,14 +11,21 @@ import javafx.scene.shape.Polygon;
 
 import com.fxgraph.graph.Cell;
 import javafx.scene.Node;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class TriangleCell extends Cell  {
 
+    private double width;
+    private double height;
+    private String cellId;
+    private Text textId;
+    private Color color;
+    
     public TriangleCell( String id) {
         super( id);
-
-        Text text = new Text(id);
+        cellId = id;
+        textId = new Text(id);
         
         double width = 32; //text.getLayoutBounds().getWidth();
         double height =  16; //text.getLayoutBounds().getHeight();
@@ -28,8 +35,40 @@ public class TriangleCell extends Cell  {
         view.setStroke(Color.RED);
         view.setFill(Color.RED);
 
-        setViews( new Node[]{view, text});
+        setViews( new Node[]{view, textId});
 
+    }
+    
+    
+    
+    public void setCellColor(String color) {
+        getChildren().stream().filter((node) -> (node instanceof Polygon))
+                .forEach((node) -> {
+            ((Polygon)node).setFill(Color.web(color));
+        });
+    }
+    
+    public void setCellId(String id) {
+        this.cellId = id;
+        getChildren().remove(textId);
+        setView(textId = new Text(id));
+    }
+    
+    
+    public double getCellHeight() {
+        return this.height;
+    }
+    
+    public double getCellWidth() {
+        return this.width;
+    }
+    
+    public Color getCellColor() {
+        return this.color;
+    }
+    
+    public String getCellId() {
+        return this.cellId;
     }
 
     

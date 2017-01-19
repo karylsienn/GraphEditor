@@ -86,7 +86,17 @@ public class DijkstraTest {
         
         List<DefaultWeightedEdge> shortestPath = DijkstraShortestPath.findPathBetween(graph, algo.get(0), algo.get(1));
         
-        shortestPath.forEach((DefaultWeightedEdge edge)->System.out.println(edge));
+        List<Cell> cells;
+        
+        for(int i = 0; i < shortestPath.size(); i++) {
+            
+            DefaultWeightedEdge edge = shortestPath.get(i);
+            String[] cellsRef = String.valueOf(edge).split(":");
+            
+            System.out.println(cellsRef[0].substring(1, cellsRef[0].length() - 1));
+            System.out.println(cellsRef[1].substring(1, cellsRef[1].length() - 1));
+            
+        }
        
     }
     

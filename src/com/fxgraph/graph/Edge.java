@@ -13,6 +13,7 @@ package com.fxgraph.graph;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Line;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 
 public class Edge extends Group {

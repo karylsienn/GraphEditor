@@ -98,6 +98,11 @@ public class Cell extends StackPane  {
         mc.marshal(cell, new File("cell.xml"));
         
     }
+    
+    @Override
+    public String toString() {
+        return this.cellId;
+    }
 
 
     
